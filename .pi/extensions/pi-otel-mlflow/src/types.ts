@@ -7,7 +7,24 @@ export interface ExtensionConfig {
   otlpHeaders?: Record<string, string> | undefined;
 }
 
-export type Handler = (event: any, ctx?: any) => Promise<void> | void;
+export interface SessionManager {
+  getSessionFile?: () => string;
+}
+
+export interface UI {
+  setStatus?: (key: string, value?: string) => void;
+  setWidget?: (id: string, lines: string[]) => void;
+  notify?: (msg: string, level?: string) => void;
+  custom?: (fn: any) => void;
+}
+
+export interface ExtensionContext {
+  sessionManager?: SessionManager;
+  ui?: UI;
+  cwd?: string;
+}
+
+export type Handler = (event: any, ctx?: ExtensionContext) => Promise<void> | void;
 
 export interface Handlers {
   onTurnStart: Handler;

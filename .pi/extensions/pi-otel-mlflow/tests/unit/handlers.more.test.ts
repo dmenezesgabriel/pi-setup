@@ -75,7 +75,7 @@ describe('handlers extra', () => {
     expect(toolSpan).toBeDefined();
     expect(toolSpan?.attrs['tool.name']).toBe('search');
 
-    const eventResult = { toolCallId: 'tc1', details: { ok: true }, isError: true, details: { error: 'x' } };
+    const eventResult = { toolCallId: 'tc1', isError: true, details: { error: 'x' } };
     await handlers.onToolResult(eventResult, ctx);
 
     // tool span should be finalized and ended
