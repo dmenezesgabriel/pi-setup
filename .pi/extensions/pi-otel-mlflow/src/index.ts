@@ -31,14 +31,31 @@ function registerHandlersWithPi(
   pi: ExtensionAPI,
   handlers: ReturnType<typeof createTracingHandlers>,
 ) {
-  pi.on('turn_start', handlers.onTurnStart);
-  pi.on('before_provider_request', handlers.onBeforeProviderRequest);
-  pi.on('after_provider_response', handlers.onAfterProviderResponse);
-  pi.on('tool_call', handlers.onToolCall);
-  pi.on('tool_result', handlers.onToolResult);
-  pi.on('message_end', handlers.onMessageEnd);
-  pi.on('turn_end', handlers.onTurnEnd);
-  pi.on('session_shutdown', handlers.onSessionShutdown);
+  // defensive wrapper so handler exceptions don't crash the host
+  function wrap<T extends (...args: any[]) => any>(fn: T) {
+    return async function wrapped(...args: any[]) {
+      try {
+        // support handlers that return promise or not
+        const res = fn(...args);
+        if (res && typeof res.then === 'function') await res;
+      } catch (err) {
+        try {
+          pi.logger?.error?.('pi-otel-mlflow handler error', String(err));
+        } catch (e) {
+          // ignore logging failures
+        }
+      }
+    } as T;
+  }
+
+  pi.on('turn_start', wrap(handlers.onTurnStart));
+  pi.on('before_provider_request', wrap(handlers.onBeforeProviderRequest));
+  pi.on('after_provider_response', wrap(handlers.onAfterProviderResponse));
+  pi.on('tool_call', wrap(handlers.onToolCall));
+  pi.on('tool_result', wrap(handlers.onToolResult));
+  pi.on('message_end', wrap(handlers.onMessageEnd));
+  pi.on('turn_end', wrap(handlers.onTurnEnd));
+  pi.on('session_shutdown', wrap(handlers.onSessionShutdown));
 
   if (handlers.registerCommand) handlers.registerCommand(pi);
 }

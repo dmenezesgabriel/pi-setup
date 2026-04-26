@@ -55,6 +55,27 @@ It is based on a detailed inspection of the codebase and running the repository'
 
 ---
 
+## Dependency policy — minimal, vetted dependencies
+
+To reduce risk and maintenance surface the project should rely on the minimum set of external packages. When a library is required prefer well-known, actively maintained, secure and widely-used packages. Avoid adding dependencies for small utility features that can be implemented safely with the standard library or minimal code.
+
+Guidelines:
+- Prefer Node.js built-ins and language features first (global fetch in Node 18+, URL, http/https, fs, child_process, crypto, etc.).
+- For HTTP in runtime code, prefer the global fetch API (Node >=18). If a polyfill is required, prefer `undici` (recommended and maintained by the Node team) or `node-fetch` only as a fallback. Add a polyfill only when absolutely necessary.
+- For testing and mocking use devDependencies only: `vitest` (already present) is acceptable. Avoid adding heavy test helper libraries unless strictly necessary; prefer simple injected stubs and small helpers.
+- For OpenTelemetry rely on the official `@opentelemetry/*` packages (already present).
+- For unique ids, `uuid` is acceptable (already used). Do not introduce alternative id libraries without justification.
+- Avoid bringing utility monoliths like `lodash` unless multiple utilities are required; prefer small, explicit helpers implemented in-house.
+- For date utilities prefer `date-fns` or `dayjs` only if advanced date handling is needed; otherwise use the native `Date` API.
+- For child process handling prefer Node's `child_process` or `execa` (dev-dependency already used for integration tests).
+- For HTTP fetch mocking in tests, prefer dependency injection of a `fetchFn` or setting `globalThis.fetch` in test setup rather than adding a separate mock library.
+
+Audit & policy enforcement actions:
+- Add a task to audit `package.json` and remove unused runtime dependencies (see TODO list below).
+- When proposing new dependencies, add a short justification and include links to the package repo/npm and recent activity (last commit, downloads).
+
+---
+
 ## What I ran (commands & results)
 
 Note: tests & commands were executed from: `.pi/extensions/pi-otel-mlflow`
@@ -199,27 +220,36 @@ Integration tests: keep existing integration test
 
 Immediate / High priority
 
-- [ ] Fix `package.json` test scripts for portability
+- [x] Audit external dependencies and minimize runtime dependencies
   - Files: `package.json`
-  - Change: Replace `--include` usage with explicit paths/globs that work across vitest versions. Example updates:
-    - `test:unit`: `vitest --run tests/unit` or `vitest --run src tests/unit`
-    - `test:integration`: `RUN_INTEGRATION_TESTS=1 vitest --run tests/integration`
-  - Acceptance: `npm run test:unit` runs successfully; `npm test` works reliably on dev machines and CI.
+  - Change: Remove unused runtime dependencies, move test/dev-only packages to `devDependencies`, and avoid adding new runtime packages unless there is a strong, justified need. Prefer native APIs and small focused libraries (see "Dependency policy").
+  - Acceptance: `package.json` contains only required runtime dependencies; CI installs and tests run reliably; any requested new runtime dependency includes a justification and security/maintenance check.
+  - Notes: Audit completed. Current runtime dependencies appear minimal and appropriate: `@opentelemetry/*` packages and `uuid`. Dev dependencies (vitest, eslint, prettier, execa, get-port) are correctly in `devDependencies`.
   - Estimate: Small (0.5-1h)
 
-- [ ] Extract trace-format helpers to `src/trace-format.ts`
-  - Files: `src/trace-format.ts`, update imports in `src/handlers.ts` and `src/traces.ts`
+- [x] Fix `package.json` test scripts for portability
+  - Files: `package.json`
+  - Change: Replaced `--include` usage with explicit paths (updated `test:unit` to `vitest --run tests/unit` and `test:integration` to `RUN_INTEGRATION_TESTS=1 vitest --run tests/integration`).
+  - Acceptance: `npm run test:unit` runs successfully; `npm test` works reliably on dev machines and CI.
+  - Notes: Completed and committed.
+  - Estimate: Small (0.5-1h)
+
+- [x] Extract trace-format helpers to `src/trace-format.ts`
+  - Files: `src/trace-format.ts`, updated imports in `src/handlers.ts` and `src/traces.ts`
   - Acceptance: no change in behavior; tests still pass.
+  - Notes: Completed. Duplicate formatting code removed from both `handlers.ts` and `traces.ts` and centralized into `src/trace-format.ts`.
   - Estimate: Medium (1-2h)
 
-- [ ] Add `src/fetcher.ts` with injectable `FetchFn` and replace inline fetch usage in `src/traces.ts` (and other modules later)
-  - Files: `src/fetcher.ts`, `src/traces.ts`, optionally `src/handlers.ts` references
+- [x] Add `src/fetcher.ts` with injectable `FetchFn` and replace inline fetch usage in `src/traces.ts` (and other modules later)
+  - Files: `src/fetcher.ts`, updated `src/traces.ts` to use the fetcher
   - Acceptance: tests can mock fetch; existing behavior preserved when using defaultFetch.
+  - Notes: Completed. `traces.ts` now uses `defaultFetch` with optional `fetchFn` injection.
   - Estimate: Medium (1-2h)
 
-- [ ] Run `npm run format` and commit formatting changes
+- [x] Run `npm run format` and commit formatting changes
   - Files: `src/*` (already applied during analysis)
   - Acceptance: `npm run format:check` passes
+  - Notes: Completed. Prettier formatting applied; `format:check` passes.
   - Estimate: Small (0.5h)
 
 
@@ -230,9 +260,10 @@ Medium priority (refactor & tests)
   - Acceptance: `createTracingHandlers` exports same public API; unit tests for handlers pass; complexity warnings resolved
   - Estimate: Large (2-4 days)
 
-- [ ] Add defensive `wrapHandler` to catch handler errors and log via `pi.logger`
-  - Files: `src/handlers/wrap.ts`, modify registration
+- [x] Add defensive `wrapHandler` to catch handler errors and log via `pi.logger`
+  - Files: `src/index.ts` (implemented inline in `registerHandlersWithPi`)
   - Acceptance: thrown errors inside handlers do not crash extension and are logged if `pi.logger` available
+  - Notes: Implemented a defensive `wrap` inside `registerHandlersWithPi` that wraps each handler. Unit tests pass.
   - Estimate: Medium (1-2h)
 
 - [ ] Improve typing in `src/types.ts` and reduce `any` usage in handlers

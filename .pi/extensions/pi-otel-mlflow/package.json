@@ -26,8 +26,8 @@
   },
   "scripts": {
     "test": "vitest",
-    "test:unit": "vitest --run --include src --include tests/unit",
-    "test:integration": "RUN_INTEGRATION_TESTS=1 vitest --run --include tests/integration",
+    "test:unit": "vitest --run tests/unit",
+    "test:integration": "RUN_INTEGRATION_TESTS=1 vitest --run tests/integration",
     "lint": "eslint 'src/**' 'tests/**' || true",
     "lint:fix": "eslint 'src/**' 'tests/**' --fix || true",
     "format": "prettier --write 'src/**/*.{ts,js,json,md}' || true",
