@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { listTraces, showTrace, createTracesHandler } from '../../src/traces';
+import { listTraces, showTrace, createTracesHandler, defaultFetch, getTraceId, formatTraceLine, formatSpanEntry } from '../../src/traces';
 
 const config: any = {
   mlflowTrackingUri: 'http://localhost:5000',
@@ -72,5 +72,46 @@ describe('traces', () => {
 
     await handler('list', ctx);
     expect(fetchFn).toHaveBeenCalled();
+  });
+
+  // defaultFetch tests (moved here from fetcher.test.ts)
+  it('defaultFetch returns json when ok', async () => {
+    const fakeResp: any = { ok: true, json: async () => ({ data: 'ok' }) };
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(fakeResp));
+    const res = await (await import('../../src/traces')).defaultFetch('http://test', { a: 1 } as any);
+    expect(res).toEqual({ data: 'ok' });
+  });
+
+  it('defaultFetch throws when non-ok', async () => {
+    const fakeResp: any = { ok: false, text: async () => 'bad' };
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(fakeResp));
+    await expect((await import('../../src/traces')).defaultFetch('http://test', { a: 1 } as any)).rejects.toThrow('bad');
+  });
+
+  it('defaultFetch throws when fetch rejects', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network')));
+    await expect((await import('../../src/traces')).defaultFetch('http://test', {} as any)).rejects.toThrow('network');
+  });
+
+  // trace-format helpers (moved here from trace-format.test.ts)
+  it('getTraceId returns trace_id or fallback', () => {
+    expect(getTraceId({ trace_info: { trace_id: 'x' } })).toBe('x');
+    expect(getTraceId({ trace_id: 'y' })).toBe('y');
+    expect(getTraceId({})).toBe('(no-id)');
+  });
+
+  it('formatTraceLine builds a short preview', () => {
+    const t = { trace_info: { trace_id: 't', timestamp_ms: Date.now(), execution_time_ms: 10, request_preview: 'hello world' } };
+    const line = formatTraceLine(t);
+    expect(line).toContain('t |');
+    expect(line).toContain('hello');
+  });
+
+  it('formatSpanEntry formats span entries', () => {
+    const now = Date.now();
+    const s = { name: 'n', startTimeUnixNano: String(now * 1e6), endTimeUnixNano: String((now + 10) * 1e6) };
+    const entry = formatSpanEntry(s);
+    expect(entry).toContain('n |');
+    expect(entry).toContain('→');
   });
 });
