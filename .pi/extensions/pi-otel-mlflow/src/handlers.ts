@@ -10,9 +10,9 @@ import {
 } from './utils';
 import type { ExtensionConfig } from './types';
 import { SpanStatusCode } from '@opentelemetry/api';
+import { getSessionFileFromContext, sessionKeyFromFile, getFallbackEventId, resolveTurnIdForEvent, setTurnForSession } from './handlers/session';
 
-// Module-level helpers for trace formatting
-import { formatTraceLine, formatSpanEntry, getTraceId } from './trace-format';
+// Module-level helpers
 
 function routeMessageEvent(
   msg: any,
@@ -45,26 +45,6 @@ function applyParentInputsToRoot(
   setSpanAttribute(root, 'mlflow.spanInputs', truncateText(userText, 2000));
 }
 
-function renderTracesList(ctx: any, traces: any[]) {
-  if (!Array.isArray(traces) || traces.length === 0) {
-    ctx.ui?.notify?.('No traces returned', 'info');
-    return;
-  }
-  const lines = traces.map(formatTraceLine);
-  ctx.ui?.setWidget?.('mlflow-traces', lines);
-}
-
-function renderTraceDetail(ctx: any, trace: any) {
-  const spans = trace?.spans ?? trace?.Spans ?? [];
-  const out: string[] = [];
-  out.push(`Trace ${getTraceId(trace)}`);
-  out.push('---');
-  for (const s of spans) {
-    out.push(formatSpanEntry(s));
-  }
-  ctx.ui?.custom?.((tui: any) => new (require('@mariozechner/pi-tui').Text)(out.join('\n'), 0, 0));
-}
-
 export function createTracingHandlers(tracer: TracerLike, config: ExtensionConfig): Handlers {
   const sessionFileToTurnId = new Map<string, string>();
   const turnIdToRootSpan = new Map<string, SpanLike>();
@@ -72,29 +52,6 @@ export function createTracingHandlers(tracer: TracerLike, config: ExtensionConfi
   const toolCallIdToSpan = new Map<string, SpanLike>();
   const messageIdToUserText = new Map<string, string>();
 
-  function getSessionFileFromContext(ctx: any): string {
-    return ctx?.sessionManager?.getSessionFile?.() ?? 'ephemeral';
-  }
-
-  function sessionKeyFromFile(rawSessionFile: string): string {
-    return String(rawSessionFile);
-  }
-
-  function getFallbackEventId(event: any): string | undefined {
-    return event?.requestId ?? event?.responseId ?? event?.id ?? undefined;
-  }
-
-  function resolveTurnIdForEvent(event: any, ctx: any): string | undefined {
-    const rawSessionFile = getSessionFileFromContext(ctx) || event?.session || event?.sessionFile;
-    const key = sessionKeyFromFile(rawSessionFile);
-    const mapped = sessionFileToTurnId.get(key);
-    if (mapped) return mapped;
-    return getFallbackEventId(event);
-  }
-
-  function setTurnForSession(rawSessionFile: string, turnId: string) {
-    sessionFileToTurnId.set(sessionKeyFromFile(rawSessionFile), turnId);
-  }
 
   function onTurnStart(event: any, ctx: any) {
     const rawSessionFile = getSessionFileFromContext(ctx);
@@ -108,7 +65,7 @@ export function createTracingHandlers(tracer: TracerLike, config: ExtensionConfi
     setSpanAttribute(span, 'mlflow.trace.session_path', rawSessionFile);
     setSpanAttribute(span, 'pi.cwd', ctx?.cwd ?? process.cwd());
 
-    setTurnForSession(rawSessionFile, turnId);
+    setTurnForSession(sessionFileToTurnId, rawSessionFile, turnId);
     turnIdToRootSpan.set(turnId, span);
 
     try {
@@ -130,17 +87,22 @@ export function createTracingHandlers(tracer: TracerLike, config: ExtensionConfi
     }
   }
 
+  function setModelAndProviderAttributes(span: SpanLike, event: any) {
+    const modelId = getModelIdFromEvent(event);
+    if (modelId) setSpanAttribute(span, 'mlflow.model_id', modelId);
+    const provider = getProviderFromEvent(event);
+    if (provider) setSpanAttribute(span, 'provider', provider);
+  }
+
   function createProviderRequestSpan(root: SpanLike, event: any): SpanLike {
     const span = tracer.startSpan('provider.request', undefined, undefined) as SpanLike;
-    const modelId = event?.payload?.model ?? event?.model ?? event?.provider?.model;
-    if (modelId) setSpanAttribute(span, 'mlflow.model_id', modelId);
-    if (event?.provider) setSpanAttribute(span, 'provider', event.provider);
+    setModelAndProviderAttributes(span, event);
     propagatePromptToRoot(root, event, span);
     return span;
   }
 
   function onBeforeProviderRequest(event: any, ctx: any) {
-    const turnId = resolveTurnIdForEvent(event, ctx);
+    const turnId = resolveTurnIdForEvent(event, ctx, sessionFileToTurnId);
     if (!turnId) return;
     const root = turnIdToRootSpan.get(turnId);
     if (!root) return;
@@ -171,7 +133,7 @@ export function createTracingHandlers(tracer: TracerLike, config: ExtensionConfi
     if (!output) return;
     const preview = truncateText(output, 2000);
     setSpanAttribute(span, 'mlflow.spanOutputs', preview);
-    const turnId = resolveTurnIdForEvent(event, ctx);
+    const turnId = resolveTurnIdForEvent(event, ctx, sessionFileToTurnId);
     if (turnId) {
       const root = turnIdToRootSpan.get(turnId);
       if (root) setSpanAttribute(root, 'mlflow.spanOutputs', preview);
@@ -215,7 +177,7 @@ export function createTracingHandlers(tracer: TracerLike, config: ExtensionConfi
   }
 
   function onToolCall(event: any, ctx: any) {
-    const turnId = resolveTurnIdForEvent(event, ctx);
+    const turnId = resolveTurnIdForEvent(event, ctx, sessionFileToTurnId);
     if (!turnId) return;
     const root = turnIdToRootSpan.get(turnId);
     if (!root) return;
@@ -262,8 +224,8 @@ export function createTracingHandlers(tracer: TracerLike, config: ExtensionConfi
     const prompt = getPromptFromEvent(msg) || getPromptFromEvent({ payload: msg });
     if (!prompt) return;
     const preview = truncateText(prompt, 2000);
-    messageIdToUserText.set(String(id), preview);
-    const turnId = resolveTurnIdForEvent(event, ctx);
+    if (preview != null) messageIdToUserText.set(String(id), preview);
+    const turnId = resolveTurnIdForEvent(event, ctx, sessionFileToTurnId);
     if (!turnId) return;
     const root = turnIdToRootSpan.get(turnId);
     if (!root) return;
@@ -312,7 +274,7 @@ export function createTracingHandlers(tracer: TracerLike, config: ExtensionConfi
   }
 
   function handleAssistantMessage(msg: any, event: any, ctx: any) {
-    const turnId = resolveTurnIdForEvent(event, ctx);
+    const turnId = resolveTurnIdForEvent(event, ctx, sessionFileToTurnId);
     if (!turnId) return;
     const root = turnIdToRootSpan.get(turnId);
     if (!root) return;
@@ -323,27 +285,36 @@ export function createTracingHandlers(tracer: TracerLike, config: ExtensionConfi
     endSpanSafely(span);
   }
 
-  function onMessageEnd(event: any, ctx: any) {
-    const msg = event?.message ?? event?.payload ?? undefined;
-    const id = event?.id ?? event?.message?.id ?? event?.payload?.id ?? undefined;
-    if (!msg || !id) return;
+  function extractMessageFromEvent(event: any): any | undefined {
+    if (!event) return undefined;
+    if (event.message) return event.message;
+    if (event.payload) return event.payload;
+    return undefined;
+  }
 
-    if (msg.role === 'user') return handleUserMessage(msg, String(id), event, ctx);
-    if (msg.role === 'assistant') return handleAssistantMessage(msg, event, ctx);
+  function extractIdFromEvent(event: any): string | undefined {
+    if (!event) return undefined;
+    if (event.id) return String(event.id);
+    if (event.message && event.message.id) return String(event.message.id);
+    if (event.payload && event.payload.id) return String(event.payload.id);
+    return undefined;
+  }
+
+  function onMessageEnd(event: any, ctx: any) {
+    const msg = extractMessageFromEvent(event);
+    const id = extractIdFromEvent(event);
+    // delegate routing to helper
+    return routeMessageEvent(msg, id, event, ctx, handleUserMessage, handleAssistantMessage);
   }
 
   function finalizeTurn(root: SpanLike, event: any, ctx: any) {
+    // apply assistant outputs if present
     const assistantMsg = event?.message ?? event?.assistantMessage;
-    if (assistantMsg) {
-      const out = getOutputFromEvent(assistantMsg) ?? getMessageContent(assistantMsg);
-      if (out) setSpanAttribute(root, 'mlflow.spanOutputs', truncateText(out, 2000));
-    }
+    if (assistantMsg) applyAssistantOutputsToRoot(root, assistantMsg);
 
+    // apply parent inputs if present
     const parentId = event?.message?.parentId ?? event?.parentId;
-    if (parentId) {
-      const userText = messageIdToUserText.get(String(parentId));
-      if (userText) setSpanAttribute(root, 'mlflow.spanInputs', truncateText(userText, 2000));
-    }
+    if (parentId) applyParentInputsToRoot(root, parentId, messageIdToUserText);
   }
 
   function onTurnEnd(event: any, ctx: any) {

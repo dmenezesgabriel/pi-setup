@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import os from 'os';
 import getPort from 'get-port';
-import execa from 'execa';
+import { execa } from 'execa';
 import { createSdk, shutdownSdk } from '../../src/otel';
 
 async function findMlflowBinary() {
