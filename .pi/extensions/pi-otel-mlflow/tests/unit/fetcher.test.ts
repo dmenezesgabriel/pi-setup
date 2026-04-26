@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { defaultFetch } from '../../src/fetcher';
+import { defaultFetch } from '../../src/traces';
 
 describe('fetcher', () => {
   beforeEach(() => {

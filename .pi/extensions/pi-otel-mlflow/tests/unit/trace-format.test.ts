@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getTraceId, formatTraceLine, formatSpanEntry } from '../../src/trace-format';
+import { getTraceId, formatTraceLine, formatSpanEntry } from '../../src/traces';
 
 describe('trace-format', () => {
   it('getTraceId returns trace_id or fallback', () => {
