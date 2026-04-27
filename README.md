@@ -13,16 +13,20 @@
 
 1. `/explore-codebase` if exits within a **subagent**
 2. `/grill-me`
-3. `/write-a-prd` 
+3. `/write-a-prd` (once broken into issues, get rid of it so it does not get outdated)
 4. Check if proposes the implementation on `horizontal` or `vertical` slices, `verical` are preferred (db -> useCase -> Service, instead of entire db first)
-5. `/to-issue`
-
+5. `/to-issue` break prd into tasks
+6. `/tdd` for Implementation (used on **ralph** loops)
+7. Review
+8. `/improve-codebase` if needed
 
 ## Highlights
 
 - TDD is a must have
+- Design the interfaces and delegate the implementation
 
 ## References
 
 - https://medium.com/@rosgluk/claude-skills-and-skill-md-for-developers-vs-code-jetbrains-cursor-775d96effe58
 - https://github.com/mattpocock/ai-engineer-workshop-2026-project
+- https://github.com/vercel-labs/agent-browser

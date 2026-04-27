@@ -3,7 +3,6 @@ name: explore-codebase
 description: Deep exploration of an unfamiliar codebase. Use when onboarding to a new repo, auditing architecture, or mapping module dependencies.
 context: fork
 agent: Explore
-compatibility: Requires Claude Code CLI.
 ---
 # Explore Codebase
 1. Walk the directory tree and summarise the top-level modules.
