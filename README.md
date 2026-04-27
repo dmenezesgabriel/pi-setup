@@ -17,6 +17,12 @@
 4. Check if proposes the implementation on `horizontal` or `vertical` slices, `verical` are preferred (db -> useCase -> Service, instead of entire db first)
 5. `/to-issue`
 
+
+## Highlights
+
+- TDD is a must have
+
 ## References
 
 - https://medium.com/@rosgluk/claude-skills-and-skill-md-for-developers-vs-code-jetbrains-cursor-775d96effe58
+- https://github.com/mattpocock/ai-engineer-workshop-2026-project
