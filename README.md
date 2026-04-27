@@ -1,5 +1,15 @@
 # Pi Setup
 
+1. **Idea**: App, Feature or Refactor
+2. **Resarch** (Optional): If difficult exploration phases, create a `research.md` to cache tbem  
+3. **Prototype** (Optional): Hash out ideais in code to get early feedback and provide assets that can be used later in implementation itself
+4. **PRD**: Create a markdown file to describe the destination, with user stories and implementation notes
+5. **Kanban**: Turn the PRD into individual tickets with blocking relationships
+6. **Implementation**: In a loop, run a coding agent to execute all of the tickets on kanban board
+7. **Code review**: Create a QA plan for a human to verify the finished work
+
+
+## Worflow
 
 1. `/explore-codebase` if exits within a **subagent**
 2. `/grill-me`
