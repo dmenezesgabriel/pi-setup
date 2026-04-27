@@ -20,21 +20,6 @@ This is a Pi coding agent extension, you can know more by reading Pi internal do
 - Eslit for linting
 - Prettier for formatting
 
-## Testing
-
-- Use Test Driven Development
-- Use Triple A Framework
-- Cover each scenario for success, failure and edge cases
-- Assure a high test coverage
-- Make sure that unit tests tests a single behavior, use mocks and spies accordingly 
-
-## Way of work
-
-- Always start with planning
-- Always do a deep research in latest documentation of packages used over the internet with your available tools
-- Always create a temporary TODO list markdown file with all tasks that should be implemented, on after each task is done mark as complete `- [x] Task` the proceed to the next one untill you finish them all
-- You have tmux at your disposal for running background commands interactively, always use it to run scripts, tests or any other blocking commands, stablish a periodic check, because you may need to send keys to exit some process instead of waiting for a long timeout and be hanging
-
 ## Agent Responses
 
 - Short, concise and precise
