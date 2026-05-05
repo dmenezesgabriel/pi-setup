@@ -30,3 +30,5 @@
 - https://medium.com/@rosgluk/claude-skills-and-skill-md-for-developers-vs-code-jetbrains-cursor-775d96effe58
 - https://github.com/mattpocock/ai-engineer-workshop-2026-project
 - https://github.com/vercel-labs/agent-browser
+- https://github.com/steipete/mcporter
+- https://docs.fallow.tools
