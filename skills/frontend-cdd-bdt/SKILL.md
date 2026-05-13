@@ -1,6 +1,6 @@
 ---
 name: frontend-cdd-bdt
-description: Use Component-Driven Development and Behavior-Driven Testing to implement frontend features safely: accessible behavior, explicit UI states, component contracts, composition boundaries, visual consistency, and critical user flows.
+description: Use Component-Driven Development and Behavior-Driven Testing to implement frontend features safely, accessible behavior, explicit UI states, component contracts, composition boundaries, visual consistency, and critical user flows.
 ---
 
 ## Purpose

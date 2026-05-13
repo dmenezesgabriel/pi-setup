@@ -8,3 +8,10 @@ reports
 llama
 !configs/llama
 models
+
+# Pi subagents
+context.md
+plan.md
+research.md
+
+__pycache__

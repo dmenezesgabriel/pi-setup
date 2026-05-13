@@ -1,6 +1,6 @@
 ---
 name: dataviz
-description: use when creating data visualization for example charts, dashboards.
+description: Use when the user wants to create, improve, or choose charts, graphs, plots, or dashboards from data. Use for chart selection, visual encoding, layout, and implementation guidance.
 ---
 
 # Data Visualization Expert Skill
