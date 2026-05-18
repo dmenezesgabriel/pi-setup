@@ -1,6 +1,6 @@
 ---
 id: "{{NUMBER}}"
-issue: "{{issues/NNN-slug.md}}"
+issue: "{{tasks/issues/NNN-slug.md}}"
 created: {{YYYY-MM-DD}}
 updated: {{YYYY-MM-DD}}
 ---
@@ -9,7 +9,7 @@ updated: {{YYYY-MM-DD}}
 
 ## Related Task
 
-- `<issues/NNN-slug.md>`
+- `<tasks/issues/NNN-slug.md>`
 
 ## Overall Verdict
 
@@ -32,7 +32,7 @@ updated: {{YYYY-MM-DD}}
 
 | AC | Result | Notes |
 |----|--------|-------|
-| AC-001 | Pass | <brief evidence — e.g., file created at reviews/NNN-slug-review.md> |
+| AC-001 | Pass | <brief evidence — e.g., file created at tasks/reviews/NNN-slug-review.md> |
 | AC-002 | Fail | <what is missing or incorrect — links to F-NNN> |
 | AC-003 | Pass | <brief evidence> |
 

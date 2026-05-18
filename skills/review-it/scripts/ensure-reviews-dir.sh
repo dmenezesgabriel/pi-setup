@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Invoked by review-it before writing review reports to `reviews/`.
+# Invoked by review-it before writing review reports to `tasks/reviews/`.
 # Exit codes: 0 (directory ready), non-zero on permission error (set -e propagates).
 # Output: prints "ready: <DIR>" on success.
 set -euo pipefail
@@ -11,11 +11,11 @@ Usage: scripts/ensure-reviews-dir.sh [DIR]
 Ensure a reviews directory exists.
 
 Arguments:
-  DIR   Directory to create. Defaults to: reviews
+  DIR   Directory to create. Defaults to: tasks/reviews
 
 Examples:
   scripts/ensure-reviews-dir.sh
-  scripts/ensure-reviews-dir.sh reviews
+  scripts/ensure-reviews-dir.sh tasks/reviews
 EOF
 }
 
@@ -24,7 +24,7 @@ if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
   exit 0
 fi
 
-REVIEWS_DIR="${1:-reviews}"
+REVIEWS_DIR="${1:-tasks/reviews}"
 
 mkdir -p "$REVIEWS_DIR"
 echo "ready: $REVIEWS_DIR"

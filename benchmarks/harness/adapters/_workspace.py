@@ -19,7 +19,7 @@ def init_workspace(workspace: Path) -> None:
         check=True,
         capture_output=True,
     )
-    for d in ["issues", "docs/adrs", "implementation"]:
+    for d in ["tasks/issues", "tasks/implementation", "tasks/reviews", "docs/adrs"]:
         (workspace / d).mkdir(parents=True, exist_ok=True)
 
 

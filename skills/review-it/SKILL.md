@@ -9,7 +9,7 @@ metadata:
 
 Review an implementation against its task contract.
 
-This skill is task-aware: it reads the related `issues/` file to extract functional requirements, non-functional requirements, acceptance criteria, observability requirements, and required tests — then evaluates the actual implementation against that structured contract.
+This skill is task-aware: it reads the related `tasks/issues/` file to extract functional requirements, non-functional requirements, acceptance criteria, observability requirements, and required tests — then evaluates the actual implementation against that structured contract.
 
 Each finding is classified as **Blocking** (prevents mark-complete), **Non-blocking** (should be addressed but does not block), or **Suggestion** (optional improvement).
 
@@ -28,9 +28,9 @@ Do not use review-it when:
 ## Core workflow
 
 1. If `CONTEXT.md` exists at the project root, read it to load the project's domain vocabulary. Use this vocabulary consistently in all finding descriptions and report sections.
-2. Identify the issue file to review. Accept it from the user argument, search `issues/` for the relevant file, or read the most recently modified issue. If no issue file can be identified, stop and ask the user to specify one — do not proceed without a task contract. (See [review-rules.md — Issue identification](references/review-rules.md#issue-identification).)
+2. Identify the issue file to review. Accept it from the user argument, search `tasks/issues/` for the relevant file, or read the most recently modified issue. If no issue file can be identified, stop and ask the user to specify one — do not proceed without a task contract. (See [review-rules.md — Issue identification](references/review-rules.md#issue-identification).)
 3. Read the issue file and extract: FRs, NFRs, ACs, OBS requirements, Required Tests, and any ADR dependencies listed under Dependencies.
-4. Read the implementation summary in `implementation/` if one exists for this issue. It records what the implementer believed was done.
+4. Read the implementation summary in `tasks/implementation/` if one exists for this issue. It records what the implementer believed was done.
 5. Inspect the actual code changes using `git diff` against the base branch, or explicit file paths provided by the user. Do not rely solely on the implementation summary — verify against the code. (See [review-rules.md — Code inspection](references/review-rules.md#code-inspection).)
 6. Inspect existing project conventions by reading comparable files: similar services, components, tests, or configuration files. Evaluate whether the implementation follows established patterns.
 7. Evaluate each acceptance criterion (`AC-*`): determine Pass or Fail based on what the code actually does.
@@ -39,24 +39,24 @@ Do not use review-it when:
 10. Evaluate ADR compliance: if the issue lists ADR files under Dependencies, check whether those ADRs were updated from `Proposed` to `Accepted` or `Rejected` as required by the task's Definition of Done.
 11. Classify each finding as **Blocking**, **Non-blocking**, or **Suggestion**. Read [review-rules.md — Finding classification](references/review-rules.md#finding-classification) for the exact criteria.
 12. Determine the overall verdict: **Pass** if there are zero Blocking findings; **Fail** if there is one or more.
-13. Write the review report in `reviews/`. Read [output-rules.md](references/output-rules.md) before writing. Use [assets/review-report-template.md](assets/review-report-template.md) as the exact structure.
+13. Write the review report in `tasks/reviews/`. Read [output-rules.md](references/output-rules.md) before writing. Use [assets/review-report-template.md](assets/review-report-template.md) as the exact structure.
 14. If domain terms were defined or clarified during review, add them to `CONTEXT.md` at the project root using the format in the existing entries.
 
 ## Output requirement
 
-When the review is complete, create a review report in `reviews/`.
+When the review is complete, create a review report in `tasks/reviews/`.
 
 Before writing, run:
 
 ```bash
-mkdir -p reviews
+mkdir -p tasks/reviews
 ```
 
 Use this naming format:
 
 ```text
-reviews/001-create-project-review.md
-reviews/002-invite-project-member-review.md
+tasks/reviews/001-create-project-review.md
+tasks/reviews/002-invite-project-member-review.md
 ```
 
 The numeric prefix matches the related issue number.
@@ -69,13 +69,13 @@ The numeric prefix matches the related issue number.
 - [ ] Every required test category is evaluated as Present or Missing
 - [ ] Every Blocking finding references a specific FR, NFR, AC, OBS, or OT ID
 - [ ] Overall verdict is **Pass** or **Fail** — no ambiguous or partial verdicts
-- [ ] Review report created in `reviews/` using the template structure
+- [ ] Review report created in `tasks/reviews/` using the template structure
 - [ ] No source files were modified
 
 ## If output fails
 
 If files cannot be created:
-- Verify the directory exists: `ls -ld reviews/` — if not, run `mkdir -p reviews`
+- Verify the directory exists: `ls -ld tasks/reviews/` — if not, run `mkdir -p tasks/reviews`
 - Report the error and propose an alternative output location if needed.
 
 ## Anti-patterns to avoid

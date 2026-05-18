@@ -1,13 +1,13 @@
 # Output Rules
 
-After completing the review, write a review report in `reviews/`.
+After completing the review, write a review report in `tasks/reviews/`.
 
 ## Directory rule
 
 Before writing the review report, ensure the directory exists:
 
 ```bash
-mkdir -p reviews
+mkdir -p tasks/reviews
 ```
 
 ## File rules
@@ -27,20 +27,20 @@ mkdir -p reviews
 ## File naming format
 
 ```text
-reviews/001-short-descriptive-slug-review.md
+tasks/reviews/001-short-descriptive-slug-review.md
 ```
 
 Good:
-- `reviews/001-create-project-review.md`
-- `reviews/002-invite-project-member-review.md`
-- `reviews/016-create-review-it-skill-review.md`
+- `tasks/reviews/001-create-project-review.md`
+- `tasks/reviews/002-invite-project-member-review.md`
+- `tasks/reviews/016-create-review-it-skill-review.md`
 
 Bad:
-- `reviews/done.md`
-- `reviews/review1.md`
-- `reviews/task-review final.md`
-- `reviews/001.md`
-- `reviews/Review.md`
+- `tasks/reviews/done.md`
+- `tasks/reviews/review1.md`
+- `tasks/reviews/task-review final.md`
+- `tasks/reviews/001.md`
+- `tasks/reviews/Review.md`
 
 ## Report content
 
@@ -58,7 +58,7 @@ The report must include:
 
 Good:
 - `F-001 — Blocking — AC-004 — unit test category missing; no test file found for UT-001.`
-- `AC-001: Pass — review report file created at reviews/016-create-review-it-skill-review.md.`
+- `AC-001: Pass — review report file created at tasks/reviews/016-create-review-it-skill-review.md.`
 - `UT-001: Missing — no file matching the test described in the Required Tests section was found.`
 
 Bad:
@@ -80,8 +80,8 @@ After writing the review report, summarize in the conversation:
 - unresolved assumptions, if any
 
 Good:
-- Reviewed `issues/016-create-review-it-skill.md`. Verdict: **Pass**. 0 Blocking, 1 Non-blocking, 2 Suggestions.
-- Reviewed `issues/001-create-project.md`. Verdict: **Fail** (F-001, F-003). AC-002 fails, IT-001 missing.
+- Reviewed `tasks/issues/016-create-review-it-skill.md`. Verdict: **Pass**. 0 Blocking, 1 Non-blocking, 2 Suggestions.
+- Reviewed `tasks/issues/001-create-project.md`. Verdict: **Fail** (F-001, F-003). AC-002 fails, IT-001 missing.
 
 Bad:
 - Done.

@@ -8,13 +8,13 @@ Before reviewing, identify the issue file that defines the task contract.
 
 Resolution order:
 
-1. Accept the issue file path from the user argument (e.g., `@issues/016-create-review-it-skill.md`).
-2. If no argument is given, search `issues/` for the most recently modified active issue.
+1. Accept the issue file path from the user argument (e.g., `@tasks/issues/016-create-review-it-skill.md`).
+2. If no argument is given, search `tasks/issues/` for the most recently modified active issue.
 3. If multiple candidates exist, ask the user to choose one — do not guess.
 4. If no issue file can be identified, stop and ask the user to specify one. Do not proceed without a task contract.
 
 Good:
-- User provides `@issues/016-create-review-it-skill.md` → read that file.
+- User provides `@tasks/issues/016-create-review-it-skill.md` → read that file.
 - User says "review the latest task" → read the most recently modified active issue.
 - User says "review" with no context and three issues are active → ask which one.
 
@@ -67,8 +67,8 @@ Criteria for Blocking:
 Every Blocking finding must reference the specific ID it violates.
 
 Good:
-- Blocking: `AC-004` — the required test for unit tests is absent; `issues/016` Required Tests lists `UT-001` but no matching test file exists.
-- Blocking: `FR-009` — no review report is written to `reviews/`; the skill invocation produced no output file.
+- Blocking: `AC-004` — the required test for unit tests is absent; `tasks/issues/016` Required Tests lists `UT-001` but no matching test file exists.
+- Blocking: `FR-009` — no review report is written to `tasks/reviews/`; the skill invocation produced no output file.
 
 Bad:
 - Blocking: code is messy.
