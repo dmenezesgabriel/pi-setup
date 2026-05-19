@@ -9,7 +9,7 @@
     "dataviz": {
       "source": "/home/gabriel-menezes/Documents/repos",
       "sourceType": "local",
-      "computedHash": "a843f6a3158e983126825f5c72a5e15436759a3a2bbeca1fcbc19e337b975dd0"
+      "computedHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "explore-codebase": {
       "source": "/home/gabriel-menezes/Documents/repos",
@@ -24,7 +24,7 @@
     "frontend-design": {
       "source": "/home/gabriel-menezes/Documents/repos",
       "sourceType": "local",
-      "computedHash": "87871aaef461eda2c96b59f31ba12e86bd5a86597ea4decaacc06af5f6251d79"
+      "computedHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "frontend-design-audit": {
       "source": "/home/gabriel-menezes/Documents/repos",
@@ -34,17 +34,17 @@
     "grill-me": {
       "source": "/home/gabriel-menezes/Documents/repos",
       "sourceType": "local",
-      "computedHash": "784f0dbb7403b0f00324bce9a112f715342777a0daee7bbb7385f9c6f0a170ea"
+      "computedHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "hf-cli": {
       "source": "/home/gabriel-menezes/Documents/repos",
       "sourceType": "local",
-      "computedHash": "83bc7919879332fd4444352ec331e883b7629fde81e776579513773346360210"
+      "computedHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "implement-it": {
       "source": "/home/gabriel-menezes/Documents/repos",
       "sourceType": "local",
-      "computedHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "computedHash": "27fc00e88c187a14be0344e20681ce761b35e2722173719e6f73d9e82d6b1978"
     },
     "naming-design-refactor": {
       "source": "/home/gabriel-menezes/Documents/repos",
@@ -64,17 +64,17 @@
     "plan-it": {
       "source": "/home/gabriel-menezes/Documents/repos",
       "sourceType": "local",
-      "computedHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "computedHash": "2655f6b6066847530d54d01dae70e3ea6f6aa32536627392c324873dfccf322e"
     },
     "playwright-cli": {
       "source": "/home/gabriel-menezes/Documents/repos",
       "sourceType": "local",
-      "computedHash": "4900e0523463dc74e96f85f66c4bc666f068922eedc5525e788be556d774345a"
+      "computedHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "review-it": {
       "source": "/home/gabriel-menezes/Documents/repos",
       "sourceType": "local",
-      "computedHash": "b063e39825b75b1481fef979c8e843cb90f05675fa918f5c92d9d607882a97c5"
+      "computedHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "security-vulnerability-audit": {
       "source": "/home/gabriel-menezes/Documents/repos",
@@ -84,7 +84,7 @@
     "setup-pre-commit": {
       "source": "/home/gabriel-menezes/Documents/repos",
       "sourceType": "local",
-      "computedHash": "f9aeedf0a1f560ec465c3939c54434c2d949ac8b958a0493db52216f688a0366"
+      "computedHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "software-design-audit": {
       "source": "/home/gabriel-menezes/Documents/repos",
